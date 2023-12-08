@@ -34,12 +34,27 @@ class InterviewAssistant:
         )
 
     def evaluate_answers(self, qa_pairs: List[dict]) -> dict:
-        questions = [qa_pair["question"] for qa_pair in qa_pairs]
-        answers = [qa_pair["answer"] for qa_pair in qa_pairs]
+        
+        questions = [qa_pair.question for qa_pair in qa_pairs]
+        answers = [qa_pair.answer for qa_pair in qa_pairs]
         prompt_and_model = self.answer_prompt | self.model
+        print("--"*10,questions)
+        print("--"*10,answers)
         output = prompt_and_model.invoke({"questions": questions, "answers": answers})
-        evaluation = self.answer_parser.invoke(output)
-        return {"score": evaluation.score, "correct_answers": evaluation.correct_answers}
+        output_dict = json.loads(output.content)
+        
+        # Transform correct_answers into the expected format
+        correct_answers_dicts = [
+            {"question": question, "answer": answer}
+            for correct_answer_dict in output_dict['correct_answers']
+            for question, answer in correct_answer_dict.items()
+        ]
+        
+        # Return the transformed output
+        return {
+            "score": output_dict['score'],
+            "correct_answers": correct_answers_dicts
+        }
 
     def generate_questions(self, topic: str, languages: List[str], level: str) -> dict:
         all_questions = []

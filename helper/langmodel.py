@@ -13,7 +13,7 @@ load_dotenv()
 
 
 model =ChatOpenAI(
-    model_name="gpt-4",
+    model_name="gpt-4-1106-preview",
 )
 
 class InterviewQuestions(BaseModel):
