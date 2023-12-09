@@ -38,8 +38,6 @@ class InterviewAssistant:
         questions = [qa_pair.question for qa_pair in qa_pairs]
         answers = [qa_pair.answer for qa_pair in qa_pairs]
         prompt_and_model = self.answer_prompt | self.model
-        print("--"*10,questions)
-        print("--"*10,answers)
         output = prompt_and_model.invoke({"questions": questions, "answers": answers})
         output_dict = json.loads(output.content)
         
