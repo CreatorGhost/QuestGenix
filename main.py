@@ -91,7 +91,7 @@ async def read_protected_route(current_user: str = Depends(get_current_user)):
     return {"message": "This is a protected route"}
 
 
-assistant = InterviewAssistant(model_name="gpt-4")
+assistant = InterviewAssistant(model_name="gpt-3.5-turbo-1106")
 
 
 @app.post("/generate_questions/", response_model=QuestionGenerationResponse)

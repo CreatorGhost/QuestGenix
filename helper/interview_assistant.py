@@ -28,7 +28,7 @@ class InterviewAssistant:
             partial_variables={"format_instructions": self.question_parser.get_format_instructions()},
         )
         self.answer_prompt = PromptTemplate(
-            template="Evaluate the following answers to the given questions. For only and only the  question that you think has been answered incorrectly, provide the correct answer.\n{format_instructions}\nQuestions: {questions}\nAnswers: {answers}\n",
+            template="Evaluate the following answers to the given questions and provide a score as a percentage out of 100. For only and only the  question that you think has been answered incorrectly, provide the correct answer.\n{format_instructions}\nQuestions: {questions}\nAnswers: {answers}\n",
             input_variables=["questions", "answers"],
             partial_variables={"format_instructions": self.answer_parser.get_format_instructions()},
         )
@@ -66,7 +66,7 @@ class InterviewAssistant:
 
 
 # Usage
-# assistant = InterviewAssistant(model_name="gpt-4")
+# assistant = InterviewAssistant(model_name="gpt-4-1106-preview")
 # topic = "data science"
 # languages = ["Python", "SQL", "Maths"]
 # level = "beginner"
