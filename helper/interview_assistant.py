@@ -81,9 +81,6 @@ class InterviewAssistant:
         # If you need to work with a dictionary, convert the Pydantic object to a dict
         output_dict = answer_evaluation.dict()
 
-        print(output_dict)
-        print("========" * 10)
-
         # Transform correct_answers into the expected format
         correct_answers_dicts = [
             {

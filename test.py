@@ -1,72 +1,19 @@
-from langchain.agents import AgentExecutor, Tool, ZeroShotAgent
-from langchain.chains import LLMChain
-from langchain.llms import OpenAI
-from langchain.memory import ConversationBufferMemory
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMMathChain 
-from langchain.tools import DuckDuckGoSearchRun
-import os
+import json
 
-from langchain.memory import ConversationBufferWindowMemory
+data = {
+    'qa_pairs': [
+        {'question': 'What is Python?', 'answer': 'python is a programming language and it is also a interpreted based programming language and its compiler is basically written in c++'},
+        {'question': 'What are the key features of Python?', 'answer': 'veesality'},
+        {'question': 'What is the difference between Python 2 and Python 3?', 'answer': ''},
+        {'question': 'How do you comment in Python?', 'answer': 'we can comment in python using # for single line comm6'},
+        {'question': 'What are the different data types in Python?', 'answer': 'list tupple dict set'},
+        {'question': 'How do you create a function in Python?', 'answer': ''},
+        {'question': "What is the use of the 'if' statement in Python?", 'answer': 'its used for conditionally cheking based on the conditions provided '},
+        {'question': 'How do you handle exceptions in Python?', 'answer': 'using try and catch '},
+        {'question': 'What are modules in Python?', 'answer': ''},
+        {'question': 'What is the difference between a list and a tuple in Python?', 'answer': ''}
+    ]
+}
 
-
-from dotenv import load_dotenv
-
-load_dotenv()
-
-openai_api_key = os.getenv("OPENAI_API_KEY")
-llm = ChatOpenAI(model="gpt-4-1106-preview", openai_api_key=openai_api_key)
-
-
-
-
-search = DuckDuckGoSearchRun()
-search_tool = Tool(
-    name="Web Search",
-    func=search.run,
-    description="A useful tool for searching the Internet to find information on world events, years, dates, issues, etc. Worth using for general topics. Use precise questions.",
-)
-
-llm_math_chain = LLMMathChain.from_llm(llm=llm, verbose=True)
-math_tool = Tool.from_function(
-    func=llm_math_chain.run,
-    name="Calculator",
-    description="Useful for when you need to answer questions about math. This tool is only for math questions and nothing else. Only input math expressions.",
-)
-
-tools=[search_tool, math_tool]
-
-
-
-prefix = """
-I am a highly capable assistant with access to a variety of tools to help with different tasks. 
-Whether it's writing code, drafting emails, searching the web, or solving math problems, I can handle it all. 
-Below is the list of tools at my disposal and the current conversation history to provide context for my responses.
-"""
-
-suffix = """Begin!"
-
-{chat_history}
-Question: {input}
-{agent_scratchpad}"""
-
-prompt = ZeroShotAgent.create_prompt(
-    tools,
-
-    input_variables=["input", "chat_history", "agent_scratchpad"],
-)
-memory = ConversationBufferWindowMemory(memory_key="chat_history")
-
-
-llm_chain = LLMChain(llm=OpenAI(temperature=0), prompt=prompt)
-agent = ZeroShotAgent(llm_chain=llm_chain, tools=tools, verbose=True)
-agent_chain = AgentExecutor.from_agent_and_tools(
-    agent=agent, tools=tools, verbose=True, memory=memory
-)
-
-agent_chain.run(input="How many people live in canada?")
-
-
-print(" ----- "* 16)
-
-agent_chain.run(input="what is their national anthem called?")
+json_string = json.dumps(data, indent=4)
+print(json_string)

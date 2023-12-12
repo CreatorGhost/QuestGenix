@@ -93,7 +93,7 @@ async def read_protected_route(current_user: str = Depends(get_current_user)):
 
 assistant = InterviewAssistant(model_name="gpt-3.5-turbo-1106")
 
-
+assistant_four = InterviewAssistant(model_name="gpt-4")
 @app.post("/generate_questions/", response_model=QuestionGenerationResponse)
 async def generate_questions(request: QuestionGenerationRequest):
     try:
@@ -114,8 +114,11 @@ async def evaluate_answers(request: AnswerEvaluationRequest):
     try:
         request_data = jsonable_encoder(request)
         logging.info(f"Evaluating answers with payload: {request_data}")
-        evaluation_dict = assistant.evaluate_answers(request.qa_pairs)
+        evaluation_dict = assistant_four.evaluate_answers(request.qa_pairs)
+
+        print("----"*19)
         logging.info(f"Answers evaluated: {evaluation_dict}")
+        print("----"*19)
         return evaluation_dict
     except Exception as e:
         logging.error(f"Error evaluating answers with payload {request_data}: {e}", exc_info=True)
