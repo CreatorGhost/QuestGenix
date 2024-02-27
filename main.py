@@ -134,7 +134,7 @@ async def evaluate_answers(request: AnswerEvaluationRequest):
 
 gemini_assist = GoogleAssistant(model_name="gemini-pro")
 
-@app.post("v2/evaluate_answers/", response_model=AnswerEvaluationResponse)
+@app.post("/v2/evaluate_answers/", response_model=AnswerEvaluationResponse)
 async def evaluate_answers(request: AnswerEvaluationRequest):
     try:
         request_data = jsonable_encoder(request)
@@ -156,7 +156,7 @@ async def evaluate_answers(request: AnswerEvaluationRequest):
 
 
 
-@app.post("v2/generate_questions/", response_model=QuestionGenerationResponse)
+@app.post("/v2/generate_questions/", response_model=QuestionGenerationResponse)
 async def generate_questions(request: QuestionGenerationRequest):
     try:
         request_data = jsonable_encoder(request)
