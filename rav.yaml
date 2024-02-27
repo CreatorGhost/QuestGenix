@@ -1,0 +1,3 @@
+scripts:
+    echo: echo hello world
+    bech : python benchmark.py

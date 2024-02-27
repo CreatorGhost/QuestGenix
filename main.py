@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.question import QuestionGenerationRequest, QuestionGenerationResponse
 from models.answer import AnswerEvaluationRequest, AnswerEvaluationResponse
 from helper.interview_assistant import InterviewAssistant
+from helper.google_assistant import GoogleAssistant
+
 import logging
 from fastapi.encoders import jsonable_encoder
 load_dotenv()  
@@ -94,6 +96,8 @@ async def read_protected_route(current_user: str = Depends(get_current_user)):
 assistant = InterviewAssistant(model_name="gpt-3.5-turbo-1106")
 
 assistant_four = InterviewAssistant(model_name="gpt-4")
+
+
 @app.post("/generate_questions/", response_model=QuestionGenerationResponse)
 async def generate_questions(request: QuestionGenerationRequest):
     try:
@@ -108,6 +112,7 @@ async def generate_questions(request: QuestionGenerationRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while generating questions."
         )
+
 
 @app.post("/evaluate_answers/", response_model=AnswerEvaluationResponse)
 async def evaluate_answers(request: AnswerEvaluationRequest):
@@ -125,4 +130,43 @@ async def evaluate_answers(request: AnswerEvaluationRequest):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while evaluating answers."
+        )
+
+gemini_assist = GoogleAssistant(model_name="gemini-pro")
+
+@app.post("v2/evaluate_answers/", response_model=AnswerEvaluationResponse)
+async def evaluate_answers(request: AnswerEvaluationRequest):
+    try:
+        request_data = jsonable_encoder(request)
+        logging.info(f"Evaluating answers with payload: {request_data}")
+        evaluation_dict = gemini_assist.evaluate_answers(request.qa_pairs)
+
+        print("----"*19)
+        logging.info(f"Answers evaluated: {evaluation_dict}")
+        print("----"*19)
+        return evaluation_dict
+    except Exception as e:
+        logging.error(f"Error evaluating answers with payload {request_data}: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while evaluating answers."
+        )
+
+
+
+
+
+@app.post("v2/generate_questions/", response_model=QuestionGenerationResponse)
+async def generate_questions(request: QuestionGenerationRequest):
+    try:
+        request_data = jsonable_encoder(request)
+        logging.info(f"Generating questions with payload: {request_data}")
+        questions_dict = gemini_assist.generate_questions(request.topic, request.languages, request.level)
+        logging.info(f"Questions generated: {questions_dict}")
+        return questions_dict
+    except Exception as e:
+        logging.error(f"Error generating questions with payload {request_data}: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while generating questions."
         )

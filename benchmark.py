@@ -6,7 +6,7 @@ import logging
 import matplotlib.pyplot as plt
 # Configuration
 MODEL_NAMES = ["gpt-4-1106-preview","gpt-3.5-turbo", "gpt-4", "gpt-3.5-turbo-1106"]
-NUM_REQUESTS = 25  # Number of requests to send for each model
+NUM_REQUESTS = 2  # Number of requests to send for each model
 
 # Placeholder for timing and error results
 results = {}
@@ -19,7 +19,6 @@ logging.basicConfig(
     filename='benchmark.log',
     filemode='w'
 )
-
 def benchmark_model(model_name):
     assistant = InterviewAssistant(model_name=model_name)
     timings = []
